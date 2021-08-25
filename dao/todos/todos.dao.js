@@ -2,8 +2,10 @@ const Todos = require('../../models/todo/todo.model');
 const crudRepository = require('../../repository/crud');
 
 const addTodo = async (data) => {
-  const todoDetails = { ...data };
-  return crudRepository.save(Todos, todoDetails);
+  if(!data.order) {
+    data.order = new Date().getTime();
+  }
+  return crudRepository.save(Todos, data);
 };
 
 const getTodos = async (filter, page, limit) => {

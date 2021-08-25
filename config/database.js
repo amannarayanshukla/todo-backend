@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 
+const {DatabaseConnectionError} = require('../utils/errors/database-connection-error')
+
 const connect = () => {
   const mongoUrl = process.env.MONGODB_URL;
   const connectionOptions = {
@@ -19,7 +21,7 @@ const connect = () => {
     });
 
     connection.on('error', (err) => {
-      console.error(`Mongoose connection error: ${mongoUrl}`);
+       err = new DatabaseConnectionError();
       reject(err);
     });
   });

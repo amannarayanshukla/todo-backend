@@ -24,7 +24,6 @@ crudRepo.updateAll = function (model, query, update, options) {
   return model.updateMany(query, update, options).lean();
 };
 
-
 crudRepo.findOne = function (model, query, options) {
   return model.findOne(query, null, options).lean();
 };
