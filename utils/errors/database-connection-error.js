@@ -1,21 +1,21 @@
-const {CustomError} = require('./custom-error')
+const { CustomError } = require('./custom-error');
 
 class DatabaseConnectionError extends CustomError {
-  reason;
+    reason;
 
-  statusCode;
+    statusCode;
 
-  constructor() {
-    super("Error connecting to database");
-    this.reason = "Error connecting to config";
-    this.statusCode = 500;
-    // Since we are extending a built in class
-    Object.setPrototypeOf(this, DatabaseConnectionError.prototype);
-  }
+    constructor() {
+      super('Error connecting to database');
+      this.reason = 'Error connecting to config';
+      this.statusCode = 500;
+      // Since we are extending a built in class
+      Object.setPrototypeOf(this, DatabaseConnectionError.prototype);
+    }
 
-  serializeErrors() {
-    return [{ message: this.reason }];
-  }
+    serializeErrors() {
+      return [{ message: this.reason }];
+    }
 }
 
-module.exports = {DatabaseConnectionError}
+module.exports = { DatabaseConnectionError };

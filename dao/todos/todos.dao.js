@@ -2,7 +2,7 @@ const Todos = require('../../models/todo/todo.model');
 const crudRepository = require('../../repository/crud');
 
 const addTodo = async (data) => {
-  if(!data.order) {
+  if (!data.order) {
     data.order = new Date().getTime();
   }
   return crudRepository.save(Todos, data);
@@ -13,7 +13,7 @@ const getTodos = async (filter, page, limit) => {
     page = parseInt(page, 10);
     limit = parseInt(limit, 10);
   }
-  filter = {...filter, archived: false}
+  filter = { ...filter, archived: false };
   return crudRepository.find(Todos, filter, page, limit);
 };
 
@@ -23,12 +23,12 @@ const putTodoById = async (todoId, updatedDetails) => crudRepository.update(Todo
   upsert: true,
 });
 
-const deleteTodoById = async (todoId) => crudRepository.update(Todos, {todoId}, {archived: true});
+const deleteTodoById = async (todoId) => crudRepository.update(Todos, { todoId }, { archived: true });
 
-const deleteAll = async(query, options) => {
-  const update = {archived: true}
+const deleteAll = async (query, options) => {
+  const update = { archived: true };
   return crudRepository.updateAll(Todos, query, update, options);
-}
+};
 
 module.exports = {
   addTodo,

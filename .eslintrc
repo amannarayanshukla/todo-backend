@@ -4,7 +4,8 @@
   },
   "extends": "airbnb-base",
   "plugins": ["promise"],
-"rules": {
+  "parser": "babel-eslint",
+  "rules": {
     "no-console": "warn",
     "promise/always-return": "error",
     "promise/no-return-wrap": "error",

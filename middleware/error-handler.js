@@ -8,9 +8,7 @@ const errorHandler = (
   next,
 ) => {
   if (err instanceof CustomError) {
-    return res
-      .status(err.statusCode)
-      .json({ success: false, errors: err.serializeErrors() });
+    return res.status(err.statusCode).json({ success: false, errors: err.serializeErrors() });
   }
 
   return res.status(400).json({

@@ -15,12 +15,12 @@ crudRepo.deleteMany = async function (model, query, options = {}) {
 };
 
 crudRepo.update = function (model, query, update, options) {
-  options = {...options, new: true}
+  options = { ...options, new: true };
   return model.findOneAndUpdate(query, update, options).lean();
 };
 
 crudRepo.updateAll = function (model, query, update, options) {
-  options = {...options, multi: true}
+  options = { ...options, multi: true };
   return model.updateMany(query, update, options).lean();
 };
 

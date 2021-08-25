@@ -2,8 +2,8 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 
-const {errorHandler} = require('./middleware/error-handler');
-const {NotFoundError} = require('./utils/errors/not-found-error')
+const { errorHandler } = require('./middleware/error-handler');
+const { NotFoundError } = require('./utils/errors/not-found-error');
 const { environmentCheck } = require('./config/environment-check');
 const { connect } = require('./config/database');
 const routes = require('./routes');
@@ -18,11 +18,10 @@ environmentCheck();
 // connect the database
 try {
   connect()
-      .then(() => console.log('connected to db')) // will replace all console log with application logger
-      .catch((err) => console.log('error connecting to db', err.message));
-
+    .then(() => console.log('connected to db')) // will replace all console log with application logger
+    .catch((err) => console.log('error connecting to db', err.message));
 } catch (e) {
-  console.log("Error db")
+  console.log('Error db');
 }
 
 const port = process.env.PORT || 3000;
