@@ -1,4 +1,4 @@
-const { addTodo, getTodos, deleteTodoById, deleteAll, getTodoById } = require('../../dao/todos/todos.dao');
+const { addTodo, getTodos, deleteTodoById, deleteAll, getTodoById, putTodoById } = require('../../dao/todos/todos.dao');
 const { uniqueIdentifier } = require('../../utils/unique-identifier/index');
 
 const create = async (title, host, protocol) => {
@@ -47,10 +47,18 @@ const archiveAll = async (query={}, options) => {
   return response;
 }
 
+const update = async (id, resource) => {
+  const response = await putTodoById(id, resource).catch((err) => {
+    console.log(err);
+  });
+  return response;
+}
+
 module.exports = {
   create,
   get,
   getOne,
+  update,
   archive,
   archiveAll
 };

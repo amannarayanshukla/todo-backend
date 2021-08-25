@@ -1,4 +1,4 @@
-const { create, get, archive, archiveAll, getOne } = require('../../services/todos/todos.service');
+const { create, get, archive, archiveAll, getOne, update } = require('../../services/todos/todos.service');
 
 const createTodo = async (req, res) => {
   const host = req.get('host');
@@ -41,10 +41,18 @@ const deleteTodosById = async (req,res) => {
   return res.send(response);
 }
 
+const updateTodos = async (req,res) => {
+  const response = await update(req.params.id, req.body).catch((err) => {
+    console.log(err);
+  });
+  return res.send(response);
+}
+
 module.exports = {
   createTodo,
   getTodos,
   getTodosById,
+  updateTodos,
   deleteTodosById,
   deleteTodos
 };
