@@ -1,8 +1,13 @@
-const { addTodo, getTodos, deleteTodoById, deleteAll } = require('../../dao/todos/todos.dao');
+const { addTodo, getTodos, deleteTodoById, deleteAll, getTodoById } = require('../../dao/todos/todos.dao');
 const { uniqueIdentifier } = require('../../utils/unique-identifier/index');
 
-const create = async ({title}) => {
-  const body = { todoId: uniqueIdentifier(), title};
+const create = async (title, host, protocol) => {
+  const id = uniqueIdentifier();
+  const body = {
+    todoId: id,
+    title,
+    url: `${protocol}://${host}/${id}`
+  }
   const response = await addTodo(body).catch((err) => {
     console.log(err);
   });
@@ -10,11 +15,19 @@ const create = async ({title}) => {
 };
 
 const get = async (filter, page = 1, limit=10) => {
-  const response = await getTodos(filter, page, limit).catch((err) => {
+  let response = await getTodos(filter, page, limit).catch((err) => {
     console.log(err);
   });
-  return response.docs;
+  response = response.docs;
+  return response.docs && response.docs.length === 0 ? response.docs : response
 };
+
+const getOne = async (todoId) => {
+  const response = await getTodoById(todoId).catch((err) => {
+    console.log(err);
+  });
+  return response;
+}
 
 const archive = async (todoId) => {
   const response = await deleteTodoById(todoId).catch((err) => {
@@ -25,7 +38,7 @@ const archive = async (todoId) => {
 
 const archiveAll = async (query={}, options) => {
   console.log(query)
-  if(!query.isCompleted) {
+  if(!query.completed) {
     query = {};
   }
   const response = await deleteAll(query, options).catch((err) => {
@@ -37,6 +50,7 @@ const archiveAll = async (query={}, options) => {
 module.exports = {
   create,
   get,
+  getOne,
   archive,
   archiveAll
 };

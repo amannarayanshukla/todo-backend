@@ -6,7 +6,8 @@ const TodoSchema = new Schema(
   {
     todoId: { type: String },
     title:  { type: String },
-    isCompleted: { type: Boolean, default: false },
+    completed: { type: Boolean, default: false },
+    url: {type: String}
   },
   { timestamps: true },
 );

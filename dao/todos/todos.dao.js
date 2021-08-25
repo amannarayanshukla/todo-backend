@@ -31,5 +31,5 @@ module.exports = {
   getTodoById,
   putTodoById,
   deleteTodoById,
-  deleteAll
+  deleteAll,
 };
