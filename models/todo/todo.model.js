@@ -7,7 +7,8 @@ const TodoSchema = new Schema(
     todoId: { type: String },
     title:  { type: String },
     completed: { type: Boolean, default: false },
-    url: {type: String}
+    url: {type: String},
+    order: {type: Number}
   },
   { timestamps: true },
 );

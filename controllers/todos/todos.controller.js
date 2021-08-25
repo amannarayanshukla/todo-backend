@@ -3,7 +3,7 @@ const { create, get, archive, archiveAll, getOne, update } = require('../../serv
 const createTodo = async (req, res) => {
   const host = req.get('host');
   const protocol = req.protocol;
-  const response = await create(req.body.title, host, protocol).catch((err) => {
+  const response = await create(req.body.title,req.body.order, host, protocol).catch((err) => {
     console.log(err);
   });
   return res.status(201).send(response);

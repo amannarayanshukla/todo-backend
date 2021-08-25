@@ -1,11 +1,12 @@
 const { addTodo, getTodos, deleteTodoById, deleteAll, getTodoById, putTodoById } = require('../../dao/todos/todos.dao');
 const { uniqueIdentifier } = require('../../utils/unique-identifier/index');
 
-const create = async (title, host, protocol) => {
+const create = async (title, order, host, protocol) => {
   const id = uniqueIdentifier();
   const body = {
     todoId: id,
     title,
+    order,
     url: `${protocol}://${host}/${id}`
   }
   const response = await addTodo(body).catch((err) => {
