@@ -21,7 +21,9 @@ const putTodoById = async (todoId, updatedDetails) => crudRepository.update(Todo
   upsert: true,
 });
 
-const deleteTodoById = async (todoId) => crudRepository.delete(Todos, { todoId });
+const deleteTodoById = async (todoId) => crudRepository.delete(Todos, {todoId});
+
+const deleteAll = async(query, options) => crudRepository.deleteMany(Todos, query, options);
 
 module.exports = {
   addTodo,
@@ -29,4 +31,5 @@ module.exports = {
   getTodoById,
   putTodoById,
   deleteTodoById,
+  deleteAll
 };

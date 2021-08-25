@@ -6,8 +6,8 @@ crudRepo.save = async function (Model, data, options = {}) {
   return doc;
 };
 
-crudRepo.delete = async function (model, key, value, options = {}) {
-  return model.findOneAndDelete({ key, value }, options).lean();
+crudRepo.delete = async function (model, query, options = {}) {
+  return model.findOneAndDelete(query, options).lean();
 };
 
 crudRepo.deleteMany = async function (model, query, options = {}) {
