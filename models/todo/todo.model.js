@@ -8,7 +8,8 @@ const TodoSchema = new Schema(
     title:  { type: String },
     completed: { type: Boolean, default: false },
     url: {type: String},
-    order: {type: Number}
+    order: {type: Number},
+    archived:{type: Boolean, default: false}
   },
   { timestamps: true },
 );

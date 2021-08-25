@@ -11,19 +11,22 @@ const getTodos = async (filter, page, limit) => {
     page = parseInt(page, 10);
     limit = parseInt(limit, 10);
   }
-
+  filter = {...filter, archived: false}
   return crudRepository.find(Todos, filter, page, limit);
 };
 
-const getTodoById = async (todoId) => crudRepository.findOne(Todos, { todoId });
+const getTodoById = async (todoId) => crudRepository.findOne(Todos, { todoId, archived: false });
 
 const putTodoById = async (todoId, updatedDetails) => crudRepository.update(Todos, { todoId }, updatedDetails, {
   upsert: true,
 });
 
-const deleteTodoById = async (todoId) => crudRepository.delete(Todos, {todoId});
+const deleteTodoById = async (todoId) => crudRepository.update(Todos, {todoId}, {archived: true});
 
-const deleteAll = async(query, options) => crudRepository.deleteMany(Todos, query, options);
+const deleteAll = async(query, options) => {
+  const update = {archived: true}
+  return crudRepository.updateAll(Todos, query, update, options);
+}
 
 module.exports = {
   addTodo,

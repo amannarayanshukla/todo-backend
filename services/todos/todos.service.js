@@ -38,7 +38,6 @@ const archive = async (todoId) => {
 }
 
 const archiveAll = async (query={}, options) => {
-  console.log(query)
   if(!query.completed) {
     query = {};
   }

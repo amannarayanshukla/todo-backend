@@ -19,6 +19,12 @@ crudRepo.update = function (model, query, update, options) {
   return model.findOneAndUpdate(query, update, options).lean();
 };
 
+crudRepo.updateAll = function (model, query, update, options) {
+  options = {...options, multi: true}
+  return model.updateMany(query, update, options).lean();
+};
+
+
 crudRepo.findOne = function (model, query, options) {
   return model.findOne(query, null, options).lean();
 };
