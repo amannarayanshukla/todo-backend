@@ -1,14 +1,20 @@
-const { addTodo } = require('../../dao/todos/todos.dao');
+const { addTodo, getTodos } = require('../../dao/todos/todos.dao');
 const { uniqueIdentifier } = require('../../utils/unique-identifier/index');
 
-const create = async (data) => {
-  const body = { todoId: uniqueIdentifier(), text: data };
+const create = async ({title}) => {
+  const body = { todoId: uniqueIdentifier(), title};
   const response = await addTodo(body).catch((err) => {
     console.log(err);
   });
-  return response.todoId;
+  return response;
+};
+
+const get = async (filter, page = 1, limit=10) => {
+  const response = await getTodos(filter, page, limit);
+  return response;
 };
 
 module.exports = {
   create,
+  get
 };

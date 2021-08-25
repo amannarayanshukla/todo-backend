@@ -4,6 +4,7 @@ const path = require('path');
 
 const { environmentCheck } = require('./config/environment-check');
 const { connect } = require('./config/database');
+const routes = require('./routes');
 
 require('dotenv').config({ path: path.join(__dirname, '.env') });
 
@@ -27,9 +28,7 @@ app.use(express.urlencoded({ extended: true }));
 const runningMessage = `We are alive! At http://localhost:${port}`;
 app.get('/health-check', (req, res) => res.status(200).send(runningMessage));
 
-app.use('/', (req, res) => {
-  res.send(`Running on port ${port}`);
-});
+app.use('/', routes);
 
 app.listen(port, () => {
   console.log(`App listening at http://localhost:${port}`);

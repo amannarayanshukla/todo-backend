@@ -12,7 +12,7 @@ const getTodos = async (filter, page, limit) => {
     limit = parseInt(limit, 10);
   }
 
-  return crudRepository.paginate(Todos, filter, page, limit);
+  return crudRepository.find(Todos, filter, page, limit);
 };
 
 const getTodoById = async (todoId) => crudRepository.findOne(Todos, { todoId });
