@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const redis = require('redis');
 
 const { DatabaseConnectionError } = require('../utils/errors/database-connection-error');
 
@@ -27,4 +28,12 @@ const connect = () => {
   });
 };
 
-module.exports = { connect };
+
+// configure redis client
+const redisService = redis.createClient({
+  port: process.env.REDIS_PORT,
+  host: process.env.REDIS_HOST,
+  password: process.env.REDIS_PASSWORD,
+});
+
+module.exports = { connect, redisService };
