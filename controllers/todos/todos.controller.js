@@ -5,6 +5,7 @@ const {
   archiveAll,
   getOne,
   update,
+  reorder
 } = require('../../services/todos/todos.service');
 const { BadRequestError } = require('../../utils/errors/bad-request-error');
 const { asyncHandler } = require('../../utils/async-handler/async-handler');
@@ -21,9 +22,9 @@ const createTodo = asyncHandler(async (req, res) => {
 
 const getTodos = asyncHandler(async (req, res) => {
   const { userId } = req;
-  const { page, limit, ...data } = req.query;
+  const { sortBy, page, limit, ...data } = req.query;
   data.userId = userId
-  const response = await get(data, page, limit).catch((err) => {
+  const response = await get(data, page, limit, sortBy).catch((err) => {
     console.log(err);
     throw new BadRequestError('Error while getting all todos please try again.');
   });
@@ -70,6 +71,24 @@ const updateTodos = asyncHandler(async (req, res) => {
   return res.send(response);
 });
 
+/*
+  * Get 3 ids max and at least 1 excluding the one moved(atleast 2)
+  * Get the details from the database for each
+  * Get the order for each
+  * (up+down)/2 = order of the one moved
+  * update the doc of reorderTodo in db
+  * */
+
+const reorderTodo = asyncHandler(async(req,res) => {
+  const { userId } = req;
+  const { upId, midId, downId } = req.body;
+  const response = await reorder(userId, upId, midId, downId).catch((err) => {
+    console.log(err);
+    throw new BadRequestError(`Error while reordering a todo ${id} please try again.`);
+  });
+  return res.send(response);
+})
+
 module.exports = {
   createTodo,
   getTodos,
@@ -77,4 +96,5 @@ module.exports = {
   updateTodos,
   deleteTodosById,
   deleteTodos,
+  reorderTodo
 };

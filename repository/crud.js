@@ -28,8 +28,14 @@ crudRepo.findOne = function (model, query, options) {
   return model.find(query, null, options).lean();
 };
 
-crudRepo.find = function (model, query, page, limit) {
-  return model.paginate(query, { page, limit });
+crudRepo.find = function (model, query, page, limit, sortBy) {
+  console.log(query)
+  const options = {
+    sort: {[sortBy]: -1},
+    page,
+    limit
+  }
+  return model.paginate(query, options);
 };
 
 module.exports = crudRepo;

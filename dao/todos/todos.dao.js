@@ -8,13 +8,13 @@ const addTodo = async (data) => {
   return crudRepository.save(Todos, data);
 };
 
-const getTodos = async (filter, page, limit) => {
+const getTodos = async (filter, page, limit, sortBy) => {
   if (typeof page === 'string' && typeof limit === 'string') {
     page = parseInt(page, 10);
     limit = parseInt(limit, 10);
   }
   filter = { ...filter, archived: false };
-  return crudRepository.find(Todos, filter, page, limit);
+  return crudRepository.find(Todos, filter, page, limit, sortBy);
 };
 
 const getTodoById = async (userId,todoId) => crudRepository.findOne(Todos, { userId,todoId, archived: false })

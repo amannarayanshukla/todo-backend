@@ -10,6 +10,7 @@ const {
   deleteTodosById,
   deleteTodos,
   updateTodos,
+  reorderTodo
 } = require('../../controllers/todos/todos.controller');
 
 // JWT verification before each call
@@ -42,5 +43,7 @@ router.delete(
   validateRequest,
   deleteTodosById,
 );
+
+router.post('/reorder', reorderTodo)
 
 module.exports = router;
