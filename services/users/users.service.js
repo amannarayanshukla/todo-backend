@@ -3,13 +3,13 @@ addUser,
   getUserById,
   getUsers,
   putUserById,
-  deleteUserById
+  deleteUserByQuery
 } = require('../../dao/users/users.dao');
 const { uniqueIdentifier } = require('../../utils/unique-identifier/index');
 const { BadRequestError } = require('../../utils/errors/bad-request-error');
-const { asyncHandler } = require('../../utils/async-handler/async-handler');
 
-const list = asyncHandler(async (filter, page, limit) => {
+// Use these for admin API's
+const list = async (filter, page, limit) => {
   const response = await getUsers(filter, page, limit).catch((err) => {
     console.log(err);
     throw new BadRequestError(
@@ -17,9 +17,9 @@ const list = asyncHandler(async (filter, page, limit) => {
     );
   });
   return response;
-});
+};
 
-const create = asyncHandler(async (resource) => {
+const create = async (resource) => {
   const body = { userId: uniqueIdentifier(), ...resource };
   const response = await addUser(body).catch((err) => {
     console.log(err);
@@ -28,9 +28,9 @@ const create = asyncHandler(async (resource) => {
     );
   });
   return response.userId;
-});
+};
 
-const listById = asyncHandler(async (id) => {
+const listById = async (id) => {
   const response = await getUserById(id).catch((err) => {
     console.log(err);
     throw new BadRequestError(
@@ -38,9 +38,9 @@ const listById = asyncHandler(async (id) => {
     );
   });
   return response;
-});
+};
 
-const putById = asyncHandler(async (id, resource) => {
+const putById = async (id, resource) => {
   const response = await putUserById(id, resource).catch((err) => {
     console.log(err);
     throw new BadRequestError(
@@ -48,17 +48,17 @@ const putById = asyncHandler(async (id, resource) => {
     );
   });
   return response.userId;
-});
+};
 
-const deleteById = asyncHandler(async (id) => {
-  const res = await deleteUserById(id).catch((err) => {
+const deleteById = async (userId) => {
+  const res = await deleteUserByQuery({ userId}).catch((err) => {
     console.log(err);
     throw new BadRequestError(
       `Error while deleting a user ${err.status} ${err.message}`,
     );
   });
-  return id;
-});
+  return userId;
+};
 
 module.exports = {
   list,

@@ -1,90 +1,46 @@
 const { successResponseHandler } = require('../../utils/responses/success.response');
-const { uniqueIdentifier } = require('../../utils/unique-identifier/index');
 const { BadRequestError } = require('../../utils/errors/bad-request-error');
 const {asyncHandler} = require('../../utils/async-handler/async-handler')
-const {
-  delRedisKey,
-  setRedisKeyValue,
-} = require('../../utils/redis-crud/redis.crud');
 
-const Users = require('../../models/user/user.model');
+const {
+  registerUser,
+  logoutUser,
+  loginUser,
+  changePasswordUser,
+  getDetails,
+  deleteUserHard
+} = require('../../services/users/users.auth.service')
 
 /**
  * @desc register a user
  * @route POST /api/v1/auth/register
  * @access Public
  */
-exports.register = asyncHandler(async (req, res) => {
+const register = asyncHandler(async (req, res) => {
   const {
     name, email, password
   } = req.body;
-    const userId = uniqueIdentifier();
-    const user = new Users({
-      userId,
-      name,
-      email,
-      password,
-    });
+  const response = await registerUser(name,email,password).catch((err) => {
+    console.log(err);
+    throw new BadRequestError('Error while registering new user please try again.');
+  });
+  return successResponseHandler(res, '', 201, response, true);
 
-    const userData = await user.save().catch((err) => {
-      if (err.code === 11000) {
-        throw new BadRequestError(
-          'A user with the email number already exists',
-        );
-      }
-      throw new BadRequestError(
-        `Error while registration please try again. ${err.message}`      );
-    });
-    const { _doc: userDoc } = userData;
-
-    if (!userDoc) {
-      throw new BadRequestError(
-        'Error while registering a new user',
-      );
-    }
-    const data = {
-      name: userDoc.name,
-      email: userDoc.email,
-      userId: userDoc.userId,
-    }
-    return successResponseHandler(res, '', 200, data, true);
 });
 
 /**  @desc login a user
  *  @route POST /api/v1/auth/login
  *  @access Public
  */
-exports.login = asyncHandler(async (req, res) => {
+const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
-  let accessToken = null;
-    let user = await Users.findOne({
-      email,
-    }).select('password userId');
-
-    if (!user) {
-      throw new BadRequestError(
-        'Invalid credentials',
-      );
-    }
-
-    const result = await user.comparePassword(password);
-
-    if (!result) {
-      throw new BadRequestError(
-        'Invalid credentials',
-      );
-    }
-
-    accessToken = await user.createAccessToken();
-    user = await user.save();
-    await setRedisKeyValue(user.userId, accessToken).catch((err) => {
-      throw new BadRequestError(
-        `Error while setting token. ${err.message}`      );
-    });
+  const { accessToken, user } = await loginUser(email,password).catch((err) => {
+    console.log(err);
+    throw new BadRequestError('Error while logging in user please try again.');
+  });
     req.session = {
       jwt: accessToken,
     };
-    user.password = '';
   return successResponseHandler(res, '', 200, user, true);
 
 });
@@ -93,28 +49,14 @@ exports.login = asyncHandler(async (req, res) => {
  *  @route GET /api/v1/auth/logout
  *  @access private
  */
-exports.logout = asyncHandler(async (req, res) => {
+const logout = asyncHandler(async (req, res) => {
   const { userId } = req;
-    const user = await Users.findOne({ userId });
-    user.accessToken = undefined;
-    await user.save().catch((err) => {
-      throw new BadRequestError(
-        `Error while logging out, ${err.message}`
-      );
-    });
-    // delete key from redis
-    const response = await delRedisKey(userId).catch((err) => {
-      throw new BadRequestError(
-        `Error while logging out, ${err.message}`
-      );
-    });
-    if (response !== 1) {
-      throw new BadRequestError(
-        `Error while logging out`
-      );
-    }
+  const {accessToken} = await logoutUser(userId).catch((err) => {
+    console.log(err);
+    throw new BadRequestError('Error while logging out user please try again.');
+  });
     req.session = {
-      jwt: null,
+      jwt: accessToken,
     };
     return successResponseHandler(res, '', 200, '', true);
 
@@ -125,42 +67,23 @@ exports.logout = asyncHandler(async (req, res) => {
  *  @route POST /api/v1/auth/reset
  *  @access private
  */
-exports.changePassword = asyncHandler(async (req, res) => {
+const changePassword = asyncHandler(async (req, res) => {
   const { userId } = req;
   const { newPassword, oldPassword } = req.body;
-    const user = await Users.findOne({ userId }).select('password userId');
-    if (user) {
-      const result = await user.comparePassword(oldPassword);
+  const {
+    accessToken,
+      userDoc
+  } = await changePasswordUser(userId,newPassword,oldPassword).catch((err) => {
+    console.log(err);
+    throw new BadRequestError('Error while changing user password please try again.');
+  });
 
-      if (!result) {
-        throw new BadRequestError(
-          'Invalid credentials',
-        );       }
-
-      user.password = newPassword;
-      user.accessToken = undefined;
-      const userDoc = await user.save();
       req.session = {
-        jwt: null,
+        jwt: accessToken,
       };
-      // delete key from redis
-      const response = await delRedisKey(userId).catch((err) => {
-        throw new BadRequestError(
-          `Error while logging out ${err.message}`
-        )
-      });
-      if (response !== 1) {
-        throw new BadRequestError(
-          'Error while changing password out'
-        );
-      }
-      userDoc.password = '';
+
       return successResponseHandler(res, '', 200, userDoc, true);
-    } else {
-      throw new BadRequestError(
-        'Invalid credentials',
-      );
-    }
+
 
 });
 
@@ -170,9 +93,9 @@ exports.changePassword = asyncHandler(async (req, res) => {
  *  @access public
  */
 // ONLY FOR TESTING REMOVE LATER
-exports.deleteUser = asyncHandler(async (req, res) => {
+const deleteUser = asyncHandler(async (req, res) => {
   const { email } = req.query;
-    const user = await Users.deleteOne({ email }).catch((err) => {
+  const user = await deleteUserHard(email).catch((err) => {
       throw new BadRequestError(
         `Error while deleting, ${err.message}`
       );
@@ -185,13 +108,21 @@ exports.deleteUser = asyncHandler(async (req, res) => {
  *  @route POST /api/v1/auth/me
  *  @access private
  */
-exports.me = asyncHandler(async (req, res) => {
+const me = asyncHandler(async (req, res) => {
   const { userId } = req;
-    const user = await Users.findOne({ userId }).catch((err) => {
+    const user = await getDetails(userId).catch((err) => {
       throw new BadRequestError(
         `Error while finding user, ${err.message}`
       );
     });
     return successResponseHandler(res, '', 200, user, true);
-
 });
+
+module.exports = {
+  register,
+  login,
+  logout,
+  changePassword,
+  deleteUser,
+  me
+}

@@ -25,7 +25,7 @@ crudRepo.updateAll = function (model, query, update, options) {
 };
 
 crudRepo.findOne = function (model, query, options) {
-  return model.findOne(query, null, options).lean();
+  return model.find(query, null, options).lean();
 };
 
 crudRepo.find = function (model, query, page, limit) {

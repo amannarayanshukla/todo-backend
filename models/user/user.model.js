@@ -54,8 +54,8 @@ UserSchema.pre('save', async function (next) {
 });
 
 // Compare password
-UserSchema.methods.comparePassword = function (candidatePassword) {
-  return bcrypt.compare(candidatePassword, this.password);
+UserSchema.methods.comparePassword = function (password) {
+  return bcrypt.compare(password, this.password);
 };
 
 // Create access token
@@ -63,8 +63,8 @@ UserSchema.methods.createAccessToken = function () {
   return jwt.sign(
     {
       userId: this.userId,
-      phone: this.phone,
-      role: this.role || 'user',
+      email: this.email,
+      role: this.role || "user",
     },
     process.env.ACCESS_TOKEN_SECRET_KEY,
     { expiresIn: process.env.ACCESS_TOKEN_EXPIRES_IN },
