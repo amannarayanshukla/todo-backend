@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const { body, param, oneOf } = require('express-validator');
+const jwtVerification = require('../../middleware/jwt');
 
 const { v4 } = require('uuid');
 const {
@@ -10,6 +11,9 @@ const {
   deleteTodos,
   updateTodos,
 } = require('../../controllers/todos/todos.controller');
+
+// JWT verification before each call
+router.use(jwtVerification);
 
 router.get('/', getTodos);
 router.get(
