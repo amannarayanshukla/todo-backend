@@ -7,8 +7,9 @@ const {
   deleteById,
 } = require('../../services/users/users.service');
 const { BadRequestError } = require('../../utils/errors/bad-request-error');
+const { asyncHandler } = require('../../utils/async-handler/async-handler');
 
-const listUsers = async (req, res) => {
+const listUsers = asyncHandler(async (req, res) => {
   const users = await list(req.query, req.query.page, req.query.limit).catch((err) => {
     console.log(err);
     throw new BadRequestError(
@@ -16,9 +17,9 @@ const listUsers = async (req, res) => {
     );
   });
   return successResponseHandler(res, '', 200, users, true);
-};
+});
 
-const createUser = async (req, res) => {
+const createUser = asyncHandler(async (req, res) => {
   const userId = await create(req.body).catch((err) => {
     console.log(err);
     throw new BadRequestError(
@@ -26,9 +27,9 @@ const createUser = async (req, res) => {
     );
   });
   return successResponseHandler(res, '', 201, userId, true);
-};
+});
 
-const getUser= async (req, res) => {
+const getUser= asyncHandler(async (req, res) => {
   const user = await listById(req.params.id).catch((err) => {
     console.log(err);
     throw new BadRequestError(
@@ -36,9 +37,9 @@ const getUser= async (req, res) => {
     );
   });
   return successResponseHandler(res, '', 200, user, true);
-};
+});
 
-const updateUser = async (req, res) => {
+const updateUser = asyncHandler(async (req, res) => {
   const userId = await putById(req.params.id, req.body).catch((err) => {
     console.log(err);
     throw new BadRequestError(
@@ -46,9 +47,9 @@ const updateUser = async (req, res) => {
     );
   });
   return successResponseHandler(res, '', 200, userId, true);
-};
+});
 
-const deleteUser = async (req, res) => {
+const deleteUser = asyncHandler(async (req, res) => {
   const userId = await deleteById(req.params.id).catch((err) => {
     console.log(err);
     throw new BadRequestError(
@@ -56,7 +57,7 @@ const deleteUser = async (req, res) => {
     );
   });
   return successResponseHandler(res, '', 200, userId, true);
-};
+});
 
 module.exports = {
   listUsers,
@@ -65,3 +66,4 @@ module.exports = {
   updateUser,
   deleteUser
 };
+

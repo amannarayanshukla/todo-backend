@@ -36,7 +36,7 @@ const jwtVerification = asyncHandler(async (req, res, next) => {
   let decoded;
 
   try {
-    decoded = jwt.verify(accessToken, process.env.JWT_ACCESS_SECRET_KEY);
+    decoded = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET_KEY);
     const reply = await getRedisKey(decoded.userId).catch((err) => {
       throw Object({
         status: err.status || 401,

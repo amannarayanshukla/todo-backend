@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const cookieSession = require('cookie-session');
 
 const { errorHandler } = require('./middleware/error-handler');
 const { NotFoundError } = require('./utils/errors/not-found-error');
@@ -29,6 +30,13 @@ const port = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(
+  cookieSession({
+    name: 'jwt',
+    signed: false,
+    secure: false, // TODO: When https value should be true
+  }),
+);
 
 // this is a simple route to make sure everything is working properly
 const runningMessage = `We are alive! At http://localhost:${port}`;

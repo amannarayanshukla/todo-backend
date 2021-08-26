@@ -11,6 +11,7 @@ const UserSchema = new Schema(
     },
     email: {
       type: String,
+      unique: true
     },
     name: {
       type: String,
@@ -65,8 +66,8 @@ UserSchema.methods.createAccessToken = function () {
       phone: this.phone,
       role: this.role || 'user',
     },
-    process.env.JWT_ACCESS_SECRET_KEY,
-    { expiresIn: '5m' }, // TODO: change the limit
+    process.env.ACCESS_TOKEN_SECRET_KEY,
+    { expiresIn: process.env.ACCESS_TOKEN_EXPIRES_IN },
   );
 };
 
